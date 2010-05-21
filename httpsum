@@ -4,7 +4,6 @@
 # defaults
 #
 
-use lib qw(/home/hardaker/perl/lib);
 use Parse::AccessLogEntry;
 use strict;
 use Getopt::GUI::Long;
@@ -16,7 +15,7 @@ my %opts = (d => '/var/log/httpd');
 Getopt::GUI::Long::Configure(qw(display_help no_ignore_case
 				capture_output no_gui allow_zero));
 GetOptions(\%opts,
-	   ["s|site=s",          "Only look for data far website name STRING"],
+	   ["s|site=s",          "Only look for data for website name STRING"],
 	   ["d|log-directory=s", "Directory containing the log files"],
 	   ["S|log-suffix=s",    "Adds a file suffix to log files searched for"],
 	   ["GUI:separator",     "Debugging"],
@@ -133,7 +132,7 @@ foreach my $site (@sites) {
 	}
     }
 
-    print "Bots:\n";
+    print "Bot hits:\n";
     foreach my $bot (keys(%bots)) {
 	$bot =~ s/[^;]+; *//;
 	$bot =~ s/;.*//;
@@ -191,3 +190,39 @@ sub get_config {
 
     return $sitedata;
 }
+
+=pod
+
+=head1 NAME
+
+httpsum - Summarize apache log files
+
+=head1 SYNOPSIS
+
+httpsum -d /path/to/logfiles [XML_CONFIG_FILE]
+
+=head1 OPTIONS
+
+=over
+
+=item -d PATH
+
+Specifies the directory to look in for logfiles.
+
+=item -S suffix
+
+Specifies the filename suffix to require.  Useful for looking for log
+entries for a specific date, if the logs are rotated daily.  EG:
+
+  httpsum -S .`date -d yesterday +%Y-%m-%d`
+
+=head1 XML_CONFIG_FILE
+
+The XML_CONFIG_FILE is a configuration file that dictates how
+reporting should be done and for what sites.  If no file is specified
+B<httpsum> will look in I<~/.httpsum.xml>.
+
+=back
+
+=cut
+
