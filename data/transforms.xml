@@ -1,4 +1,4 @@
-    <transformreferer name=".*\.(google|conduit|bing|aol)\.(?:com|co.uk|ca|co.nz).*\?(.*&amp;|)q=([^&amp;]*).*">$1: $3</transformreferer>
+    <transformreferer name=".*\.(ask|google|conduit|bing|aol)\.(?:com|co.uk|ca|co.nz).*\?(.*&amp;|)q=([^&amp;]*).*">$1: $3</transformreferer>
     <transformreferer name=".*facebook.*share.*">facebook: share</transformreferer>
     <transformreferer name=".*facebook.*profile.*">facebook: profile</transformreferer>
     <transformreferer name=".*facebook.*extarnalhit.*">facebook: embedding</transformreferer>
