@@ -1,0 +1,65 @@
+    <agent name="Google"       	 bot="1">Googlebot</agent>
+    <agent name="Feedfetcher"  	 bot="1">Feedfetcher</agent>
+    <agent name="Yahoo..Slurp" 	 bot="1">Yahoo</agent>
+    <agent name="msnbot"       	 bot="1">MSN</agent>
+    <agent name="Twiceler"     	 bot="1">Twiceler</agent>
+    <agent name="Sosospider"   	 bot="1">Sosospider</agent>
+    <agent name="ScoutJet"     	 bot="1">ScoutJet</agent>
+    <agent name="Sphere Scout"	 bot="1">sphere.com</agent>
+    <agent name="BlogPulseLive"	 bot="1">BlogPulse</agent>
+    <agent name="Charlotte"    	 bot="1">SearchMe</agent>
+    <agent name="Nutch"        	 bot="1">Nutch</agent>
+    <agent name="Gigabot"      	 bot="1">gigabot</agent>
+    <agent name="Yandex"       	 bot="1">Yandex</agent>
+    <agent name="Exabot"       	 bot="1">Exabot</agent>
+    <agent name="ICC-Crawler"  	 bot="1">NICT</agent>
+    <agent name="Speedy Spider"  bot="1">EntireWeb</agent>
+    <agent name="DotBot"       	 bot="1">dotnetdotcom</agent>
+    <agent name="discobot"     	 bot="1">Discoveryengine</agent>
+    <agent name="Ask Jeeves"   	 bot="1">Ask Jeeves</agent>
+    <agent name="Baiduspider"  	 bot="1">Baidu.jpg</agent>
+    <agent name="MSR-ISRCC"    	 bot="1">MSR-ISRC</agent>
+    <agent name="ia_archiver"  	 bot="1">Alexa</agent>
+    <agent name="R6_FeedFetcher" bot="1">Radian6</agent>
+    <agent name="Yeti"         	 bot="1">Naver.com</agent>
+    <agent name="Butterfly"    	 bot="1">Topsy</agent>
+    <agent name="DKIMRepBot"   	 bot="1">DKIMRep</agent>
+    <agent name="KaloogaBot"   	 bot="1">Kalooga</agent>
+    <agent name="Snapbot"      	 bot="1">Snap</agent>
+    <agent name="CCBot"       	 bot="1">commoncrawl</agent>
+    <agent name="SurveyBot"      bot="1">SurveyBot</agent>
+    <agent name="CatchBot"       bot="1">CatchBot</agent>
+    <agent name="apnoti.com Robot" bot="1">Aptnoti</agent>
+    <agent name="VoilaBot"       bot="1">VoilaBot</agent>
+    <agent name="crawly_"        bot="1">commandcom</agent>
+    <agent name="Mail.Ru"        bot="1">Mail.Ru</agent>
+    <agent name="DoCoMo"         bot="1">DoCoMo</agent>
+    <agent name="GingerCrawler"  bot="1">GingerCrawler</agent>
+    <agent name="sai-crawler.callingcard"  bot="1">IBM Research</agent>
+    <agent name="metadatalabs"   bot="1">metadatalabs</agent>
+    <agent name="larbin"         bot="1">larbin</agent>
+    <agent name="majestic12"     bot="1">majestic12</agent>
+    <agent name="tagoobot"       bot="1">tagoobot</agent>
+    <agent name="voyager"        bot="1">kosmix.com</agent>
+    <agent name="//holmes.ge"  	 bot="1">HolmesBot</agent>
+    <agent name="robotgenius"  	 bot="1">robotgenius</agent>
+    <agent name="findfiles.net"	 bot="1">findfiles.net</agent>
+    <agent name="BlogPulse"	 bot="1">BlogPulse</agent>
+    <agent name="ParchBot"	 bot="1">ParchBot</agent>
+    <agent name="Daumoa"	 bot="1">Daumoa</agent>
+    <agent name="isara"	 	 bot="1">isara</agent>
+    <agent name="Plukkie"        bot="1">Plukkie</agent>
+    <agent name="Linguee Bot"    bot="1">Linguee Bot</agent>
+    <agent name="Surphace Scout" bot="1">surphace.com</agent>
+    <agent name="YoudaoBot"      bot="1">youdao.com</agent>
+    <agent name="Sogou web spider" bot="1">sogou.com</agent>
+    <agent name="CamontSpider"   bot="1">CamontSpider</agent>
+    <agent name="taptubot"       bot="1">taptubot</agent>
+    <agent name="feedtrace"      bot="1">feedtrace</agent>
+    <agent name="Gecko.*bot"     bot="1">Firefox cacher?</agent>
+    <agent name="mxbot"          bot="1">chainn.com</agent>
+    <agent name="Dow Jones Searchbot" bot="1">Dow Jones Searchbot</agent>
+    <agent name="SheenBot"       bot="1">SheenBot</agent>
+    <agent name="ellerdale.com"  bot="1">ellerdale.com</agent>
+    <agent name="amibot"         bot="1">amibot</agent>
+    <agent name="seoprofiler"    bot="1">seoprofiler</agent>

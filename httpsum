@@ -23,6 +23,7 @@ GetOptions(\%opts,
 	   ["s|site=s",          "Only look for data for website name STRING"],
 	   ["d|log-directory=s", "Directory containing the log files"],
 	   ["S|log-suffix=s",    "Adds a file suffix to log files searched for"],
+	   ["p|path=s",          "Adds search path components for include files"],
 	   ["GUI:separator",     "Debugging"],
 	   ["D|dump-config",     "Dump config being used for each site"],
 	   ["GUI:otherargs_text", "XML_Config_File"],
@@ -213,8 +214,10 @@ sub read_xml_file {
 
     # locate the file
     if (! -f $file) {
-	my @searchpath = (".", $ENV{'HOME'} . "/.httpsum",
-			  "/usr/share/httpsum");
+	my @searchpath = (".", split(",", $opts{'p'}),
+			  $ENV{'HOME'} . "/.httpsum",
+			  "/usr/share/httpsum/include-modules",
+			  "/usr/local/share/httpsum/include-modules");
 	my $found = 0;
 	foreach my $path (@searchpath) {
 	    if (-f "$path/$file") {
