@@ -1,0 +1,193 @@
+#!/usr/bin/perl
+
+#
+# defaults
+#
+
+use lib qw(/home/hardaker/perl/lib);
+use Parse::AccessLogEntry;
+use strict;
+use Getopt::GUI::Long;
+use XML::Simple;
+use Data::Dumper;
+
+my %opts = (d => '/var/log/httpd');
+
+Getopt::GUI::Long::Configure(qw(display_help no_ignore_case
+				capture_output no_gui allow_zero));
+GetOptions(\%opts,
+	   ["s|site=s",          "Only look for data far website name STRING"],
+	   ["d|log-directory=s", "Directory containing the log files"],
+	   ["S|log-suffix=s",    "Adds a file suffix to log files searched for"],
+	   ["GUI:separator",     "Debugging"],
+	   ["D|dump-config",     "Dump config being used for each site"],
+	   ["GUI:otherargs_text", "XML_Config_File"],
+	  ) || exit 1;
+
+my $xmlfile = $ARGV[0] || $ENV{'HOME'} . "/.httpsum.xml";
+
+my $config = XMLin($xmlfile,
+		   ForceArray => [qw(ignorefile agent site
+				     transformreferer transformfile
+				     ignorereferer ignoreuseragent)]);
+
+my $parser = Parse::AccessLogEntry::new();
+my %results;
+
+# figure out what sites to look for
+my @sites = split(/,\s*/,$opts{'s'});
+@sites = keys(%{$config->{'sites'}{'site'}}) if ($#sites == -1);
+
+site:
+foreach my $site (@sites) {
+    my $sitedata = get_config($config, $site);
+
+    print "\n----- $site -----\n\n";
+
+    print Dumper($sitedata) if ($opts{'D'});
+
+    # open each needed log file
+    my $files = $sitedata->{'file'};
+    $files = $sitedata->{'directory'} . "/" . $files if ($files !~ /\//);
+
+    # output data goes in the results hash
+    my %results;
+
+    # a list of the bots that searched the site
+    my %bots;
+
+    # a count of the number of bots
+    my $robots;
+
+    foreach my $file (glob($files)) {
+	print "-- Procesing $file\n" if ($opts{'D'});
+	if (! -f $file) {
+	    print STDERR "** failed to open file $file\n";
+	    next site;
+	}
+
+	open(I, $file);
+      line:
+	while (<I>) {
+
+	    # process the line and skip if it's a HEAD request
+	    my $parts = $parser->parse($_);
+	    next if ($parts->{'rtype'} eq 'HEAD');
+
+	    foreach my $map (keys(%{$sitedata->{'agent'}})) {
+		if ($parts->{'agent'} =~ /$map/) {
+		    $parts->{'agent'} = $sitedata->{'agent'}{$map}{'content'};
+		    if ($sitedata->{'agent'}{$map}{'bot'}) {
+			$bots{$parts->{'agent'}}++;
+			next line;
+		    }
+		    last;
+		}
+	    }
+
+	    # ignore things that look at the robots.txt file
+	    # XXX: should be configurable; skip "U" agent
+	    if ($parts->{'file'} =~ /robots.txt/) {
+		$results{$parts->{'file'}}{'robot'}++;
+		$results{$parts->{'file'}}{'count'}++;
+# XXX
+# 		push @useragentignores, $parts->{'agent'}
+# 		  if (!exists($bots{$parts->{'agent'}}));
+
+		print "** possible bot:  $parts->{'agent'}\n";
+
+		$bots{$parts->{'agent'}}++;
+		$robots++;
+		next;
+	    }
+
+	    # process teh list of files to ignore
+	    foreach my $fileig (@{$sitedata->{'ignorefile'}}) {
+		next line if ($parts->{'file'} =~ /$fileig/);
+	    }
+
+	    # ignore things based on referals
+	    foreach my $refer (@{$sitedata->{'ignorereferer'}}) {
+		next line if ($parts->{'refer'} =~ /$refer/);
+	    }
+
+	    foreach my $host (@{$sitedata->{'ignorehost'}}) {
+		next line if ($parts->{'host'} =~ /$host/);
+	    }
+
+	    foreach my $useragent (@{$sitedata->{'ignoreuseragent'}}) {
+		next line if ($parts->{'agent'} eq $useragent);
+	    }
+
+	    foreach my $transform (keys(%{$sitedata->{'transformreferer'}})) {
+		$parts->{'refer'} =~ s/$transform/eval "\"$sitedata->{'transformreferer'}{$transform}{'content'}\""/e;
+	    }
+
+	    foreach my $transform (keys(%{$sitedata->{'transformfile'}})) {
+		$parts->{'file'} =~ s/$transform/eval "\"$sitedata->{'transformfile'}{$transform}{'content'}\""/e;
+	    }
+
+	    # finally classify the results
+	    $results{$parts->{'file'}}{$parts->{'refer'}}++;
+	    $results{$parts->{'file'}}{'count'}++;
+	}
+    }
+
+    print "Bots:\n";
+    foreach my $bot (keys(%bots)) {
+	$bot =~ s/[^;]+; *//;
+	$bot =~ s/;.*//;
+	printf("%6d %s\n", $bots{$bot}, $bot);
+    }
+
+    print "\nHits:\n";
+    foreach my $file (sort { $results{$a}{'count'} <=> $results{$b}{'count'} } keys(%results)) {
+	printf "%6d %-70.70s\n", $results{$file}{'count'}, $file;
+	foreach my $referer (sort { $results{$file}{$a} <=> $results{$file}{$b} } keys(%{$results{$file}})) {
+	    next if ($referer eq 'count');
+	    next if ($referer eq '-');
+	    printf "  %6d %-70.70s\n",$results{$file}{$referer}, $referer;
+	}
+    }
+}
+
+
+sub get_config {
+    my ($xmldata, $site) = @_;
+
+    my $sitedata = $xmldata->{'sites'}{'site'}{$site};
+
+    # ARRAYs
+    # copy each value from a set of config tokens into the array
+    foreach my $key (qw(ignorefile)) {
+	foreach my $value (@{$xmldata->{'global'}{$key}}) {
+	    push @{$sitedata->{$key}}, $value;
+	}
+    }
+
+    # SCALARs
+    # copy each value from a set of config tokens into the array
+    foreach my $key (qw(directory file)) {
+	$sitedata->{$key} = $xmldata->{'global'}{$key}
+	  if (!exists($sitedata->{$key}));
+	$sitedata->{$key} =~ s/\%{site}/$site/g;
+    }
+
+    # NAME = VALUE
+    # copy each value and each name into the config array
+    foreach my $key (qw(agent transformreferer)) {
+	foreach my $name (keys(%{$xmldata->{'global'}{$key}})) {
+	    if (!exists($sitedata->{$key}{$name})) {
+		$sitedata->{$key}{$name} = $xmldata->{'global'}{$key}{$name};
+	    }
+	}
+    }
+
+    # supply a few defaults
+    $sitedata->{'file'} = "$site.log" if (!exists($sitedata->{'file'}));
+    $sitedata->{'directory'} = $opts{'d'} if (!exists($sitedata->{'directory'}));
+
+    $sitedata->{'file'} .= $opts{'S'} if (defined($opts{'S'}));
+
+    return $sitedata;
+}
