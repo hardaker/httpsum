@@ -210,6 +210,25 @@ sub get_config {
 sub read_xml_file {
     my ($tmpxmlh, $file) = @_;
     my $fileh = new IO::File;
+
+    # locate the file
+    if (! -f $file) {
+	my @searchpath = (".", $ENV{'HOME'} . "/.httpsum",
+			  "/usr/share/httpsum");
+	my $found = 0;
+	foreach my $path (@searchpath) {
+	    if (-f "$path/$file") {
+		$file = "$path/$file";
+		$found = 1;
+		last;
+	    }
+	}
+	if (!$found) {
+	    print STDERR "*** failed to locate include file '$file'; continuing anyway\n";
+	    return;
+	}
+    }
+
     $fileh->open("< $file");
     while (<$fileh>) {
 	if (/<include>\s*(.*)<\/include>/) {
