@@ -1,0 +1,9 @@
+      <ignorefile>wp-content</ignorefile>
+      <ignorefile>wp-includes</ignorefile>
+      <ignorefile>wp-admin</ignorefile>
+      <ignorefile>wp-cron.php</ignorefile>
+      <ignorefile>/tags/</ignorefile>
+      <ignorefile>/feed</ignorefile>
+      <ignorefile>\?feed</ignorefile>
+      <ignorefile>/catagories/</ignorefile>
+      <transformfile name=".*wp-comments-post.php.*">Comment Post</transformfile>

@@ -1,0 +1,9 @@
+      <ignorefile>/themes/</ignorefile>
+      <ignorefile>/modules/</ignorefile>
+      <ignorefile>/lib/</ignorefile>
+      <ignorefile>/images/</ignorefile>
+      <ignorefile>main.php\?g2_view=imageframe.CSS</ignorefile>
+      <transformfile name=".*core.Download.*g2_itemId=(\d+).*">Image: $1</transformfile>
+      <transformfile name=".*cart.AddToCart.*g2_itemId=(\d+).*">=== CART: $1========================================</transformfile>
+      <transformfile name=".*main.php\?g2_itemId=(\d+).*">Item: $1</transformfile>
+      <transformreferer name=".*main.php\?g2_itemId=(\d+).*">Item: $1</transformreferer>
