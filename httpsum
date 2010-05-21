@@ -25,6 +25,7 @@ GetOptions(\%opts,
 	   ["S|log-suffix=s",    "Adds a file suffix to log files searched for"],
 	   ["p|path=s",          "Adds search path components for include files"],
 	   ["GUI:separator",     "Debugging"],
+	   ["debug",             "Debugging output"],
 	   ["D|dump-config",     "Dump config being used for each site"],
 	   ["GUI:otherargs_text", "XML_Config_File"],
 	  ) || exit 1;
@@ -38,9 +39,11 @@ my $xmlfile = $ARGV[0] || $ENV{'HOME'} . "/.httpsum.xml";
 
 my ($tmpxmlh, $tmpxmlfile) = tempfile();
 
+DEBUG("creating temporary XML file from input files");
 read_xml_file($tmpxmlh, $xmlfile);
 $tmpxmlh->close();
 
+DEBUG("reading XML file");
 my $config = XMLin($tmpxmlfile,
 		   ForceArray => [qw(ignorefile agent site
 				     transformreferer transformfile
@@ -76,7 +79,7 @@ foreach my $site (@sites) {
     my $robots;
 
     foreach my $file (glob($files)) {
-	print "-- Procesing $file\n" if ($opts{'D'});
+	DEBUG("processing $file");
 	if (! -f $file) {
 	    print STDERR "** failed to open file $file\n";
 	    next site;
@@ -232,6 +235,7 @@ sub read_xml_file {
 	}
     }
 
+    DEBUG("  reading $file");
     $fileh->open("< $file");
     while (<$fileh>) {
 	if (/<include>\s*(.*)<\/include>/) {
@@ -244,6 +248,12 @@ sub read_xml_file {
 	print $tmpxmlh $_;
     }
     $fileh->close();
+}
+
+sub DEBUG {
+    if ($opts{'debug'}) {
+	print @_,"\n";
+    }
 }
 
 
