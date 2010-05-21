@@ -9,7 +9,12 @@ use strict;
 use Getopt::GUI::Long;
 use XML::Simple;
 use Data::Dumper;
+use File::Temp qw(tempfile);
+use IO::File;
 
+#
+# Option parsing
+#
 my %opts = (d => '/var/log/httpd');
 
 Getopt::GUI::Long::Configure(qw(display_help no_ignore_case
@@ -23,12 +28,23 @@ GetOptions(\%opts,
 	   ["GUI:otherargs_text", "XML_Config_File"],
 	  ) || exit 1;
 
+#
+# Configuration File
+#
+# read in the .xml config file with special <include> processing
+#
 my $xmlfile = $ARGV[0] || $ENV{'HOME'} . "/.httpsum.xml";
 
-my $config = XMLin($xmlfile,
+my ($tmpxmlh, $tmpxmlfile) = tempfile();
+
+read_xml_file($tmpxmlh, $xmlfile);
+$tmpxmlh->close();
+
+my $config = XMLin($tmpxmlfile,
 		   ForceArray => [qw(ignorefile agent site
 				     transformreferer transformfile
 				     ignorereferer ignoreuseragent)]);
+unlink($tmpxmlfile);
 
 my $parser = Parse::AccessLogEntry::new();
 my %results;
@@ -190,6 +206,24 @@ sub get_config {
 
     return $sitedata;
 }
+
+sub read_xml_file {
+    my ($tmpxmlh, $file) = @_;
+    my $fileh = new IO::File;
+    $fileh->open("< $file");
+    while (<$fileh>) {
+	if (/<include>\s*(.*)<\/include>/) {
+	    my $file = $1;
+	    chomp($file);
+	    read_xml_file($tmpxmlh, $file);
+	} elsif (/<include\s+src=\"(.*)\"\s*\/>/){
+	    read_xml_file($tmpxmlh, $1);
+	}
+	print $tmpxmlh $_;
+    }
+    $fileh->close();
+}
+
 
 =pod
 
