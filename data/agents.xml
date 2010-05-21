@@ -63,3 +63,8 @@
     <agent name="ellerdale.com"  bot="1">ellerdale.com</agent>
     <agent name="amibot"         bot="1">amibot</agent>
     <agent name="seoprofiler"    bot="1">seoprofiler</agent>
+    <agent name="R6_CommentReader"       	 bot="1">R6_CommentReader</agent>
+    <agent name="Search17Bot"    bot="1">Search17Bot</agent>
+    <agent name="copyright sheriff"    bot="1">copyrightsheriff.com</agent>
+    <agent name="betaBot"        bot="1">betaBot</agent>
+    <agent name="ips-agent"      bot="1">Verisign ips-agent</agent>
