@@ -120,7 +120,11 @@ foreach my $site (@sites) {
 		next;
 	    }
 
-	    # process teh list of files to ignore
+	    #
+	    # ignore lines
+	    #
+
+	    # process the list of files to ignore
 	    foreach my $fileig (@{$sitedata->{'ignorefile'}}) {
 		next line if ($parts->{'file'} =~ /$fileig/);
 	    }
@@ -138,6 +142,9 @@ foreach my $site (@sites) {
 		next line if ($parts->{'agent'} eq $useragent);
 	    }
 
+	    #
+	    # transformations
+	    #
 	    foreach my $transform (keys(%{$sitedata->{'transformreferer'}})) {
 		$parts->{'refer'} =~ s/$transform/eval "\"$sitedata->{'transformreferer'}{$transform}{'content'}\""/e;
 	    }
