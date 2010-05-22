@@ -20,14 +20,15 @@ my %opts = (d => '/var/log/httpd');
 Getopt::GUI::Long::Configure(qw(display_help no_ignore_case
 				capture_output no_gui allow_zero));
 GetOptions(\%opts,
+	   ["c|config-file=s",   "XML Config File to use"],
 	   ["s|site=s",          "Only look for data for website name STRING"],
 	   ["d|log-directory=s", "Directory containing the log files"],
 	   ["S|log-suffix=s",    "Adds a file suffix to log files searched for"],
-	   ["p|path=s",          "Adds search path components for include files"],
+	   ["I|include-path=s",  "Adds search path components for include files"],
 	   ["GUI:separator",     "Debugging"],
 	   ["debug",             "Debugging output"],
 	   ["D|dump-config",     "Dump config being used for each site"],
-	   ["GUI:otherargs_text", "XML_Config_File"],
+	   ["GUI:otherargs_text", "[LOG_FILES]"],
 	  ) || exit 1;
 
 #
@@ -35,7 +36,7 @@ GetOptions(\%opts,
 #
 # read in the .xml config file with special <include> processing
 #
-my $xmlfile = $ARGV[0] || $ENV{'HOME'} . "/.httpsum.xml";
+my $xmlfile = $opts{'c'} || $ENV{'HOME'} . "/.httpsum.xml";
 
 my ($tmpxmlh, $tmpxmlfile) = tempfile();
 
@@ -66,8 +67,14 @@ foreach my $site (@sites) {
     print Dumper($sitedata) if ($opts{'D'});
 
     # open each needed log file
-    my $files = $sitedata->{'file'};
-    $files = $sitedata->{'directory'} . "/" . $files if ($files !~ /\//);
+    my @files;
+    if ($#ARGV == -1) {
+	my $files = $sitedata->{'file'};
+	$files = $sitedata->{'directory'} . "/" . $files if ($files !~ /\//);
+	@files = glob($files);
+    } else {
+	@files = @ARGV;
+    }
 
     # output data goes in the results hash
     my %results;
@@ -78,7 +85,7 @@ foreach my $site (@sites) {
     # a count of the number of bots
     my $robots;
 
-    foreach my $file (glob($files)) {
+    foreach my $file (@files) {
 	DEBUG("processing $file");
 	if (! -f $file) {
 	    print STDERR "** failed to open file $file\n";
@@ -224,7 +231,7 @@ sub read_xml_file {
 
     # locate the file
     if (! -f $file) {
-	my @searchpath = (".", split(",", $opts{'p'}),
+	my @searchpath = (".", split(",", $opts{'I'}),
 			  $ENV{'HOME'} . "/.httpsum",
 			  "/usr/share/httpsum/include-modules",
 			  "/usr/local/share/httpsum/include-modules");
