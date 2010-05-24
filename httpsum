@@ -279,7 +279,7 @@ httpsum - Summarize apache log files
 
 =head1 SYNOPSIS
 
-httpsum -d /path/to/logfiles [XML_CONFIG_FILE]
+httpsum -d /path/to/logfiles [OPTIONS] [LOG_FILES...]
 
 =head1 OPTIONS
 
@@ -296,11 +296,102 @@ entries for a specific date, if the logs are rotated daily.  EG:
 
   httpsum -S .`date -d yesterday +%Y-%m-%d`
 
+=item -c XML_CONFIG_FILE
+
+This is fundamental configuration file used to decide what sites are
+being analyized, how to interpret the logs, etc.  See the
+B<XML_CONFIG_FILE> section below for complete details on the format of
+this file.
+
+=item -s SITE
+
+Assume all the logs read are for a single SITE.  Normally the
+XML_CONFIG_FILE can identify multiple sites to report information
+about, but this option allows the output to be limited to a single
+site.
+
+=item -I INCLUDE_PATH
+
+Specifies an optional include path to use when using the <include...>
+directive of the XML_CONFIG_FILE.
+
+=item --debug
+
+Extra verbose debugging about exactly what B<httpsum> is doing.
+
+=item -D
+
+Dumps the configuration file per-site that is being used to analyize
+the log files for that site.  This reports both the global and site
+specific options as finally combined.
+
+=back
+
 =head1 XML_CONFIG_FILE
 
 The XML_CONFIG_FILE is a configuration file that dictates how
 reporting should be done and for what sites.  If no file is specified
-B<httpsum> will look in I<~/.httpsum.xml>.
+via the command line then B<httpsum> will look in I<~/.httpsum.xml>.
+
+The contents of the file will take the following high-level format:
+
+  <httpsum>
+    <global>
+      <!-- Global options that apply to all sites -->
+    </global>
+    <sites>
+      <!-- Sites to analyize and site-specific options>
+    </sites>
+  </httpsum>
+
+Any directive below can appear in either the site-specific section or
+in the global section.  Global options will map to each site, but
+site-specific options will only apply to that individual site.
+
+=over
+
+=item <file>FILES</file>
+
+Specifies the files to read; possibly with wild-card matching.  A
+special %{site} keyword can be used when placed in the global section
+to add the site name into the file pattern.
+
+Example:
+
+  <file>/var/log/httpd/%{site}/access.log.*</file>
+
+=item <ignorehost>HOST</ignorehost>
+
+Ignores hosts of a particular address.  EG,
+
+  <ignorehost>127.0.0.1</ignorehost>
+
+Will not analyize log file lines generated from requests from the
+localhost.
+
+=item <ignorereferrer>REFERER</ignorereferrer>
+
+If you wish to ignore accesses that were refered to from particular
+location this token will let you do that.  This is handy for only
+analyzizing incoming requests that came from a remote or bookmarkde
+location, for example.  By ignoring the site name itself it'll ensure
+that first incoming connections are examined.
+
+=item <ignorefile>FILE</ignorefile>
+
+Ignores requests to FILES (really path components).  This is useful
+for ignoring common files that provide no useful data, like CSS files
+or image directories.  The I<FILE> specifier is actually a regular
+expression so expressions like "\.css$" and "^/2010/.*/foo$" are valid
+expressions.
+
+=item <agent name="MATCH_REGEXP" bot="1|0">NAME</agent>
+
+If a given agent name matches the I<MATCH_REGEXP> regular expression
+then it will be translated into NAME when analyized.  This is most
+useful when the I<bot> attribute is set to 1 as the web crawling bot
+hit will not be counted as a normal hit and will simply be summarized
+in the bot specific output section.
 
 =back
 
