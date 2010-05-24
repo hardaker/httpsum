@@ -68,3 +68,6 @@
     <agent name="copyright sheriff"    bot="1">copyrightsheriff.com</agent>
     <agent name="betaBot"        bot="1">betaBot</agent>
     <agent name="ips-agent"      bot="1">Verisign ips-agent</agent>
+    <agent name="Toplistbot"     bot="1">Toplistbot</agent>
+    <agent name="archive.org_bot" bot="1">archive.org</agent>
+    <agent name="aiHitBot"       bot="1">aiHitBot</agent>
