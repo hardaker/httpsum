@@ -4,7 +4,7 @@
 
     <step type="system" title="Pre-Checks">
       <commands>
-	<command>or status</command>
+	<command>perl -I/home/hardaker/src/or.git/lib /home/hardaker/src/or.git/or status</command>
 	<command>grep VERSION httpsum</command>
       </commands>
     </step>
@@ -28,14 +28,14 @@
 
     <step type="system" title="Check the version number changes">
       <commands>
-	<command ignoreerror="1">or diff | egrep '^[-\+]'</command>
+	<command ignoreerror="1">perl -I/home/hardaker/src/or.git/lib /home/hardaker/src/or.git/or diff | egrep '^[-\+]'</command>
       </commands>
     </step>
 
     <step type="system" title="Commit the changes"
     interactive="1">
       <commands>
-	<command>or commit -m "Update Version Number: {VERSION}"</command>
+	<command>perl -I/home/hardaker/src/or.git/lib /home/hardaker/src/or.git/or commit -m "Update Version Number: {VERSION}"</command>
       </commands>
     </step>
 
@@ -47,13 +47,13 @@
 
     <step type="system" title="Check the MANIFEST changes">
       <commands>
-	<command ignoreerror="1">or diff | egrep '^[-\+]'</command>
+	<command ignoreerror="1">perl -I/home/hardaker/src/or.git/lib /home/hardaker/src/or.git/or diff | egrep '^[-\+]'</command>
       </commands>
     </step>
 
     <step type="system" title="Commit the MANIfEST changes" interactive="1">
       <commands>
-	<command>or commit -m "Update MANIFEST for {VERSION}"</command>
+	<command>perl -I/home/hardaker/src/or.git/lib /home/hardaker/src/or.git/or commit -m "Update MANIFEST for {VERSION}"</command>
       </commands>
     </step>
 
