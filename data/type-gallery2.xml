@@ -2,8 +2,18 @@
       <ignorefile>/modules/</ignorefile>
       <ignorefile>/lib/</ignorefile>
       <ignorefile>/images/</ignorefile>
+      <ignorefile>core.CombinedJavascript</ignorefile>
       <ignorefile>main.php\?g2_view=imageframe.CSS</ignorefile>
       <transformfile name=".*core.Download.*g2_itemId=(\d+).*">Image: $1</transformfile>
       <transformfile name=".*cart.AddToCart.*g2_itemId=(\d+).*">Added to Cart: $1</transformfile>
       <transformfile name=".*main.php\?g2_itemId=(\d+).*">Item: $1</transformfile>
+
+      <!-- with an item number -->
+      <transformfile name=".*main.php\?g2_view=(\w+)\.([^&amp;]+).*itemId=(\d+).*">$1: $2 - $3</transformfile>
+      <transformreferer name=".*main.php\?g2_view=(\w+)\.([^&amp;]+).*itemId=(\d+).*">$1: $2 - $3</transformreferer>
+
+      <!-- without an item number -->
+      <transformfile name=".*main.php\?g2_view=(\w+)\.([^&amp;]+).*">$1: $2</transformfile>
+      <transformreferer name=".*main.php\?g2_view=(\w+)\.([^&amp;]+).*">$1: $2</transformreferer>
+
       <transformreferer name=".*main.php\?g2_itemId=(\d+).*">Item: $1</transformreferer>
