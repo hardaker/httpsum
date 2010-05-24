@@ -1,0 +1,96 @@
+<!-- this is a makerelease script: http://makerelease.sourceforge.net/ -->
+<makerelease>
+  <steps>
+
+    <step type="system" title="Pre-Checks">
+      <commands>
+	<command>or status</command>
+	<command>grep VERSION httpsum</command>
+      </commands>
+    </step>
+
+    <step type="prompt" prompt="Enter the new version number:"
+      title="Pick A Version Number"
+      parameter="VERSION" values="^[\.\d]+$"
+      />
+
+    <step type="modify" title="Updating version number">
+      <modifications>
+	<modify
+	  find="(VERSION\s*=\s*.)([0-9]+\.[0-9]+)"
+	  replace="${1}{VERSION}">
+	  <files>
+	    <file>httpsum</file>
+	  </files>
+	</modify>
+      </modifications>
+    </step>
+
+    <step type="system" title="Check the version number changes">
+      <commands>
+	<command ignoreerror="1">or diff | egrep '^[-\+]'</command>
+      </commands>
+    </step>
+
+    <step type="system" title="Commit the changes"
+    interactive="1">
+      <commands>
+	<command>or commit -m "Update Version Number: {VERSION}"</command>
+      </commands>
+    </step>
+
+    <step type="system" title="Make Test">
+      <commands>
+	<command>make clean</command>
+	<command>perl Makefile.PL</command>
+	<command>make test</command>
+      </commands>
+    </step>
+
+    <step type="section" interactive="1" title="Create Release">
+      <text>
+	We'll now:
+         - create the tag
+         - export the results to a tar ball.
+
+	Quit now if you're not ready to finish the release.
+      </text>
+    
+      <steps>
+	<step type="system" title="tag the release">
+	  <commands>
+	    <command>git tag {VERSION}</command>
+	  </commands>
+	</step>
+
+	<step type="system" title="make dist">
+	  <commands>
+	    <command>make dist</command>
+	  </commands>
+	</step>
+
+	<step type="system" title="creating binaries">
+	  <commands>
+	    <command>sh dist/Makefile.pp {VERSION}</command>
+	  </commands>
+	</step>	  
+
+	<step type="system" title="upload to personal site">
+	  <commands>
+	    <command>scp makerelease-{VERSION}.tar.gz dh:hardakers.net/code/makerelease/releases/</command>
+	    <command>scp makerelease-{VERSION}.linux dh:hardakers.net/code/makerelease/releases/</command>
+	  </commands>
+	</step>
+
+      </steps>
+    </step>
+
+    <step type="system" title="make docs">
+      <commands>
+	<command>pod2html --infile=or --outfile=or.html</command>
+	<command>pod2html --infile=lib/TheOneRing.pm --outfile=TheOneRing.html</command>
+	<command>scp or.html TheOneRing.html dh:hardakers.net/code/TheOneRing/</command>
+      </commands>
+    </step>
+  </steps>
+</makerelease>
