@@ -6,6 +6,7 @@ use ExtUtils::MakeMaker;
 
 %opts = (
 	 'NAME'		=> 'httpsum',
+	 'VERSION_FROM'  => 'httpsum',
 	 'PREREQ_PM'    => { XML::Simple => 0,
 			     Getopt::GUI::Long => 0,
 			     Parse::AccessLogEntry => 0

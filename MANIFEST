@@ -1,0 +1,8 @@
+data/agents.xml
+data/transforms.xml
+data/type-gallery2.xml
+data/type-wordpress.xml
+httpsum
+Makefile.PL
+MANIFEST			This list of files
+MANIFEST.SKIP

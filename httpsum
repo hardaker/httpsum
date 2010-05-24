@@ -12,6 +12,8 @@ use Data::Dumper;
 use File::Temp qw(tempfile);
 use IO::File;
 
+our $VERSION = "0.5";
+
 #
 # Option parsing
 #
