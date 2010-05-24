@@ -39,6 +39,24 @@
       </commands>
     </step>
 
+    <step type="system" title="Update the MANIFEST">
+      <commands>
+	<command ignoreerror="1">perl -e 'use ExtUtils::Manifest qw(mkmanifest); mkmanifest();'</command>
+      </commands>
+    </step>
+
+    <step type="system" title="Check the MANIFEST changes">
+      <commands>
+	<command ignoreerror="1">or diff | egrep '^[-\+]'</command>
+      </commands>
+    </step>
+
+    <step type="system" title="Commit the MANIfEST changes" interactive="1">
+      <commands>
+	<command>or commit -m "Update MANIFEST for {VERSION}"</command>
+      </commands>
+    </step>
+
     <step type="system" title="Make Test">
       <commands>
 	<command>make clean</command>
