@@ -294,7 +294,7 @@ httpsum -d /path/to/logfiles [OPTIONS] [LOG_FILES...]
 
 =head1 DESCRIPTION
 
-B<httpsum> strives to analyize log files and give you just the results
+B<httpsum> strives to analyze log files and give you just the results
 you care about.  Too many log file analyzers exist but few let you
 perform proper filtering and aggregation down to the level of just the
 page-hits for the pages you care about.  B<httpsum> tries to fix that
@@ -319,7 +319,7 @@ entries for a specific date, if the logs are rotated daily.  EG:
 =item -c XML_CONFIG_FILE
 
 This is fundamental configuration file used to decide what sites are
-being analyized, how to interpret the logs, etc.  See the
+being analyzed, how to interpret the logs, etc.  See the
 B<XML_CONFIG_FILE> section below for complete details on the format of
 this file.
 
@@ -344,7 +344,7 @@ Extra verbose debugging about exactly what B<httpsum> is doing.
 
 =item -D
 
-Dumps the configuration file per-site that is being used to analyize
+Dumps the configuration file per-site that is being used to analyze
 the log files for that site.  This reports both the global and site
 specific options as finally combined.
 
@@ -363,7 +363,7 @@ The contents of the file will take the following high-level format:
       <!-- Global options that apply to all sites -->
     </global>
     <sites>
-      <!-- Sites to analyize and site-specific options>
+      <!-- Sites to analyze and site-specific options>
     </sites>
   </httpsum>
 
@@ -392,14 +392,14 @@ Ignores hosts of a particular address.  EG,
 
   <ignorehost>127.0.0.1</ignorehost>
 
-Will not analyize log file lines generated from requests from the
+Will not analyze log file lines generated from requests from the
 localhost.
 
 =item <ignorereferrer>REFERERE<lt>/ignorereferrer>
 
-If you wish to ignore accesses that were refered to from particular
+If you wish to ignore accesses that were referred to from particular
 location this token will let you do that.  This is handy for only
-analyzizing incoming requests that came from a remote or bookmarkde
+analyzing incoming requests that came from a remote or bookmarked
 location, for example.  By ignoring the site name itself it'll ensure
 that first incoming connections are examined.
 
@@ -414,7 +414,7 @@ expressions.
 =item <agent name="MATCH_REGEXP" bot="1|0">NAMEE<lt>/agent>
 
 If a given agent name matches the I<MATCH_REGEXP> regular expression
-then it will be translated into NAME when analyized.  This is most
+then it will be translated into NAME when analyzed.  This is most
 useful when the I<bot> attribute is set to 1 as the web crawling bot
 hit will not be counted as a normal hit and will simply be summarized
 in the bot specific output section.
@@ -453,16 +453,16 @@ following search paths will be checked for:
   /usr/share/httpsum/include-modules
   /usr/local/share/httpsum/include-modules"
 
-Some include files that may be of interest are distirbuted with the
-httpsum application; see futher below for details.
+Some include files that may be of interest are distributed with the
+httpsum application; see further below for details.
 
 Note that this is an easy-to-use include statement that is not fully
-XML-legal (if you wisth to use a XML-legal syntax, please see the use
+XML-legal (if you wish to use a XML-legal syntax, please see the use
 of XML "entities" in XML language documentation).
 
 =back
 
-=head1 HTTPSUM DISTIRBUTED INCLUDE FILES
+=head1 HTTPSUM DISTRIBUTED INCLUDE FILES
 
 The following include files are distributed with httpsum:
 
@@ -508,7 +508,7 @@ Consider the following configuration file:
   </httpsum>
 
 Then the following shows example output when run as follows on the
-log-files from the capturedonearth.com website:
+log-files from the http://capturedonearth.com/ website:
 
  # httpsum -c config.xml capturedonearth.com/access.log.2010-05-1*
 
@@ -546,7 +546,7 @@ log-files from the capturedonearth.com website:
        13 Item: 8549
 
 The indented lines are the referring site.  EG, picture number 8545
-was refered to 6 times by http://touch.facebook.com/.
+was referred to 6 times by http://touch.facebook.com/.
 
 =head1 AUTHOR
 
