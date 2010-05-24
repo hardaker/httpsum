@@ -36,7 +36,7 @@ GetOptions(\%opts,
 #
 # read in the .xml config file with special <include> processing
 #
-my $xmlfile = $opts{'c'} || $ENV{'HOME'} . "/.httpsum.xml";
+my $xmlfile = $opts{'c'} || $ENV{'HOME'} . "/.httpsum/config.xml";
 
 my ($tmpxmlh, $tmpxmlfile) = tempfile();
 
@@ -281,6 +281,15 @@ httpsum - Summarize apache log files
 
 httpsum -d /path/to/logfiles [OPTIONS] [LOG_FILES...]
 
+=head1 DESCRIPTION
+
+B<httpsum> strives to analyize log files and give you just the results
+you care about.  Too many log file analyzers exist but few let you
+perform proper filtering and aggregation down to the level of just the
+page-hits for the pages you care about.  B<httpsum> tries to fix that
+by simply dumping a summary table of the results after various filters
+and transformations have been applied.
+
 =head1 OPTIONS
 
 =over
@@ -302,6 +311,9 @@ This is fundamental configuration file used to decide what sites are
 being analyized, how to interpret the logs, etc.  See the
 B<XML_CONFIG_FILE> section below for complete details on the format of
 this file.
+
+If not specified then the default $HOME/.httpsum/config.xml file will
+be used.
 
 =item -s SITE
 
@@ -350,7 +362,7 @@ site-specific options will only apply to that individual site.
 
 =over
 
-=item <file>FILES</file>
+=item <file>FILESE<lt>/file>
 
 Specifies the files to read; possibly with wild-card matching.  A
 special %{site} keyword can be used when placed in the global section
@@ -360,7 +372,10 @@ Example:
 
   <file>/var/log/httpd/%{site}/access.log.*</file>
 
-=item <ignorehost>HOST</ignorehost>
+Note that this directive is ignored if log files are specified on the
+command line instead.
+
+=item <ignorehost>HOSTE<lt>/ignorehost>
 
 Ignores hosts of a particular address.  EG,
 
@@ -369,7 +384,7 @@ Ignores hosts of a particular address.  EG,
 Will not analyize log file lines generated from requests from the
 localhost.
 
-=item <ignorereferrer>REFERER</ignorereferrer>
+=item <ignorereferrer>REFERERE<lt>/ignorereferrer>
 
 If you wish to ignore accesses that were refered to from particular
 location this token will let you do that.  This is handy for only
@@ -377,7 +392,7 @@ analyzizing incoming requests that came from a remote or bookmarkde
 location, for example.  By ignoring the site name itself it'll ensure
 that first incoming connections are examined.
 
-=item <ignorefile>FILE</ignorefile>
+=item <ignorefile>FILEE<lt>/ignorefile>
 
 Ignores requests to FILES (really path components).  This is useful
 for ignoring common files that provide no useful data, like CSS files
@@ -385,7 +400,7 @@ or image directories.  The I<FILE> specifier is actually a regular
 expression so expressions like "\.css$" and "^/2010/.*/foo$" are valid
 expressions.
 
-=item <agent name="MATCH_REGEXP" bot="1|0">NAME</agent>
+=item <agent name="MATCH_REGEXP" bot="1|0">NAMEE<lt>/agent>
 
 If a given agent name matches the I<MATCH_REGEXP> regular expression
 then it will be translated into NAME when analyized.  This is most
@@ -393,7 +408,89 @@ useful when the I<bot> attribute is set to 1 as the web crawling bot
 hit will not be counted as a normal hit and will simply be summarized
 in the bot specific output section.
 
+=item <transformfile name="REGEXP">REPLACEMENTE<lt>/transformfile>
+
+Replaces a URL with an alternative version.  This is designed to make
+longer URL strings easier to read.
+
+For example, take the complex gallery2 URL that doesn't make much sense to look at quickly and the following line will transform the URL into a much more simple to read "Image: NUMBER" lien:
+
+    <transformfile name=".*core.Download.*g2_itemId=(\d+).*">Image: $1</transformfile>
+
+=item <transformreferer name="REGEXP">REPLACEMENTE<lt>/transformreferer>
+
+Similar to transformfile, but applies to referer strings.
+
+For example,
+
+    <transformreferer name=".*facebook.*share.*">facebook: share</transformreferer>
+
+Will translate any "share" item from a facebook referer into a simple
+"facebook: share" string so that you simply receive a count of how
+many times this page was hit by someone "sharing" it on facebook.
+
+=item <include src="FILE" />
+
+This includes the contents of another file into the one currently
+being processed.  The I<FILE> may refer to a complete file or
+path-name.  If it can't be immediately found then files in the
+following search paths will be checked for:
+
+  .
+  -I switch paths if given
+  $HOME/.httpsum
+  /usr/share/httpsum/include-modules
+  /usr/local/share/httpsum/include-modules"
+
+Some include files that may be of interest are distirbuted with the
+httpsum application; see futher below for details.
+
+Note that this is an easy-to-use include statement that is not fully
+XML-legal (if you wisth to use a XML-legal syntax, please see the use
+of XML "entities" in XML language documentation).
+
 =back
+
+=head1 HTTPSUM DISTIRBUTED INCLUDE FILES
+
+The following include files are distributed with httpsum:
+
+=over
+
+=item agents.xml
+
+A file containing many of the common bot/web-crawlers.  It is highly
+recommended you include this file in the <global> section of your
+configuration.
+
+=item transforms.xml
+
+A list of transformations converting complex URLs into easy-to-read
+outputs.  For example, search engines are converted from their full
+URL to strings like "engine: word1+word2...".
+
+=item type-wordpress.xml
+
+Contains useful exclude patterns for including in wordpress sites.
+
+=item type-gallery2.xml
+
+Contains useful exclude patterns for including in gallery2 sites.
+Also transforms certain URL patterns into easy-to-read results like
+"Image: NUMBER".
+
+=back
+
+=head1 AUTHOR
+
+Wes Hardaker < hardaker AT users DT sourceforge TOD net >
+
+=head1 COPYRIGHT and LICENSE
+
+Copyright 2009-2010, Wes Hardaker.  All rights reserved. 
+
+httpsum is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
 
 =cut
 
