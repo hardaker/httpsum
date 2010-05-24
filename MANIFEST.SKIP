@@ -12,3 +12,5 @@
 httpsum.*.gz
 pm_to_blib
 blib
+dist/
+.*.tmp
