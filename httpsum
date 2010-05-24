@@ -28,6 +28,7 @@ GetOptions(\%opts,
 	   ["GUI:separator",     "Debugging"],
 	   ["debug",             "Debugging output"],
 	   ["D|dump-config",     "Dump config being used for each site"],
+	   ["w|write-config=s",  "Writes the resulting combined config to a particular file"],
 	   ["GUI:otherargs_text", "[LOG_FILES]"],
 	  ) || exit 1;
 
@@ -38,7 +39,14 @@ GetOptions(\%opts,
 #
 my $xmlfile = $opts{'c'} || $ENV{'HOME'} . "/.httpsum/config.xml";
 
-my ($tmpxmlh, $tmpxmlfile) = tempfile();
+my ($tmpxmlh, $tmpxmlfile);
+if ($opts{'w'}) {
+    $tmpxmlfile = $opts{'w'};
+    $tmpxmlh = new IO::File;
+    $tmpxmlh->open("> $tmpxmlfile") || die "can't open $opts{'w'} for writing";
+} else {
+    ($tmpxmlh, $tmpxmlfile) = tempfile();
+}
 
 DEBUG("creating temporary XML file from input files");
 read_xml_file($tmpxmlh, $xmlfile);
@@ -49,7 +57,7 @@ my $config = XMLin($tmpxmlfile,
 		   ForceArray => [qw(ignorefile agent site
 				     transformreferer transformfile
 				     ignorereferer ignoreuseragent)]);
-unlink($tmpxmlfile);
+unlink($tmpxmlfile) if (!$opts{'w'});
 
 my $parser = Parse::AccessLogEntry::new();
 my %results;
@@ -192,7 +200,7 @@ sub get_config {
 
     # ARRAYs
     # copy each value from a set of config tokens into the array
-    foreach my $key (qw(ignorefile)) {
+    foreach my $key (qw(ignorefile ignorereferer ignorehost)) {
 	foreach my $value (@{$xmldata->{'global'}{$key}}) {
 	    push @{$sitedata->{$key}}, $value;
 	}
@@ -208,7 +216,8 @@ sub get_config {
 
     # NAME = VALUE
     # copy each value and each name into the config array
-    foreach my $key (qw(agent transformreferer)) {
+    foreach my $key (qw(agent transformfile transformreferer)) {
+	next if (!exists($xmldata->{'global'}{$key}));
 	foreach my $name (keys(%{$xmldata->{'global'}{$key}})) {
 	    if (!exists($sitedata->{$key}{$name})) {
 		$sitedata->{$key}{$name} = $xmldata->{'global'}{$key}{$name};
@@ -480,6 +489,62 @@ Also transforms certain URL patterns into easy-to-read results like
 "Image: NUMBER".
 
 =back
+
+=head1 EXAMPLE
+
+Consider the following configuration file:
+
+  <httpsum>
+    <global>
+      <include src="agents.xml" />
+    </global>
+    <sites>
+      <site name="capturedonearth.com">
+        <include>type-gallery2.xml</include>
+      </site>
+    </sites>
+  </httpsum>
+
+Then the following shows example output when run as follows on the
+log-files from the capturedonearth.com website:
+
+ # httpsum -c config.xml capturedonearth.com/access.log.2010-05-1*
+
+ ----- capturedonearth.com -----
+
+ Bot hits:
+      8 Ask Jeeves
+      3 SurveyBot
+    548 dotnetdotcom
+     21 Twiceler
+   1663 MSN
+   ...
+
+ Hits:
+      1 Item: 6379
+      1 core: DownloadItem - 6831
+        1 Item: 81
+      1 core: DownloadItem - 6647
+        1 Item: 8545
+      ...
+     28 Item: 8545
+        1 http://twitter.com/
+        1 Item: 8549
+        1 Item: 8545
+        1 http://twitter.com/NevadaWolf/geocachers
+        6 http://touch.facebook.com/
+     62 slideshow: DownloadPicLens
+        1 Item: 7128
+        1 slideshow: Slideshow - 35
+        ...
+        2 slideshow: Slideshow - 6638
+        3 slideshow: Slideshow - 6363
+        8 http://capturedonearth.com/main.php
+       10 Item: 8545
+       13 Item: 8549
+
+The indented lines are the referring site.  EG, picture number 8545
+was refered to 6 times by http://touch.facebook.com/.
 
 =head1 AUTHOR
 
