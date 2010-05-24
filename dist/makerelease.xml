@@ -95,8 +95,8 @@
 
 	<step type="system" title="upload to personal site">
 	  <commands>
-	    <command>scp makerelease-{VERSION}.tar.gz dh:hardakers.net/code/makerelease/releases/</command>
-	    <command>scp makerelease-{VERSION}.linux dh:hardakers.net/code/makerelease/releases/</command>
+	    <command>scp httpsum-{VERSION}.tar.gz dh:hardakers.net/code/httpsum/releases/</command>
+	    <command>scp httpsum-{VERSION}.linux dh:hardakers.net/code/httpsum/releases/</command>
 	  </commands>
 	</step>
 
@@ -105,9 +105,8 @@
 
     <step type="system" title="make docs">
       <commands>
-	<command>pod2html --infile=or --outfile=or.html</command>
-	<command>pod2html --infile=lib/TheOneRing.pm --outfile=TheOneRing.html</command>
-	<command>scp or.html TheOneRing.html dh:hardakers.net/code/TheOneRing/</command>
+	<command>pod2html --infile=httpsum --outfile=httpsum.html</command>
+	<command>scp httpsum.html dh:hardakers.net/code/httpsum/manual.html</command>
       </commands>
     </step>
   </steps>
