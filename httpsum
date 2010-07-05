@@ -56,7 +56,7 @@ $tmpxmlh->close();
 
 DEBUG("reading XML file");
 my $config = XMLin($tmpxmlfile,
-		   ForceArray => [qw(ignorefile agent site
+		   ForceArray => [qw(ignorefile agent site ignorehost
 				     transformreferer transformfile
 				     ignorereferer ignoreuseragent)]);
 unlink($tmpxmlfile) if (!$opts{'w'});
