@@ -6,4 +6,4 @@ APP=`echo $APP | tr A-Z a-z`
 
 rm -f $APP
 
-pp -I lib -o $APP -M Getopt::GUI::Long httpsum
+pp -I lib -o $APP -M Getopt::GUI::Long -M XML::LibXML::SAX -M XML::LibXML httpsum
