@@ -3,6 +3,7 @@ data/transforms.xml
 data/type-gallery2.xml
 data/type-wordpress.xml
 httpsum
+httpsum.html
 Makefile.PL
 MANIFEST
 MANIFEST.SKIP
